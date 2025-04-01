@@ -260,7 +260,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   res = determine_copynumber(BAFvals, LogRvals, rho, psi, gamma, ctrans, ctrans.logR, maxdist, siglevel, noperms, cn_upper_limit)
   subcloneres = res$subcloneres
   #write.table(subcloneres, gsub(".txt", "_1.txt", output.file), quote=F, col.names=T, row.names=F, sep="\t")
-  write.table(subcloneres, paste0(outputfile.prefix, "subclones_1.txt"), quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(subcloneres, paste0(outputfile.prefix, "copynumber_1.txt"), quote=F, col.names=T, row.names=F, sep="\t")
   
   # Scan the segments for cases that should be merged
   res = merge_segments(subcloneres, BAFvals, LogRvals, rho, psi, gamma, calc_seg_baf_option)
@@ -282,9 +282,9 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   
   # Write the final copy number profile 
   # NAP: generating two output files: first reporting solution A and the second reporting alternative solutions (B to F)
-  write.table(subcloneres[,c(1:3,8:13)], paste0(outputfile.prefix, "subclones.txt"), quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(subcloneres[,c(1:3,8:13)], paste0(outputfile.prefix, "copynumber.txt"), quote=F, col.names=T, row.names=F, sep="\t")
   #write.table(subcloneres, gsub(".txt","_extended.txt",output.file), quote=F, col.names=T, row.names=F, sep="\t")
-  write.table(subcloneres, paste0(outputfile.prefix,"subclones_extended.txt"), quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(subcloneres, paste0(outputfile.prefix,"copynumber_extended.txt"), quote=F, col.names=T, row.names=F, sep="\t")
 
   # NAP - November 2023
   # Recalculate PGA.is.clonal to match the final copy number profile in copynumber.txt file (previously subclones.txt file)
