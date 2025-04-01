@@ -138,7 +138,7 @@ fit.copy.number = function(samplename, outputfile.prefix, inputfile.baf.segmente
   # write out the segmented logR data
   row.names(segmented.logR.data) = row.names(matched.segmented.BAF.data)
   row.names(logR.data) = row.names(matched.segmented.BAF.data)
-  write.table(segmented.logR.data,paste(samplename,".logRsegmented.txt",sep=""),sep="\t",quote=F,col.names=F,row.names=F)
+  write.table(segmented.logR.data,paste0(outputfile.prefix,"logRsegmented.txt"),sep="\t",quote=F,col.names=F,row.names=F)
   
   # Prepare the data for going into the runASCAT functions
   segBAF = 1-matched.segmented.BAF.data[,5]
@@ -210,7 +210,7 @@ print(paste0("Ces: "," 0 ", ascat_optimum_pair))
 #' @author dw9, sd11
 #' @export
 
-callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.file, output.file, output.figures.prefix, output.gw.figures.prefix, chr_names, masking_output_file, max_allowed_state=250, cn_upper_limit=1000, prior_breakpoints_file=NULL, gamma=1, segmentation.gamma=NA, siglevel=0.05, maxdist=0.01, noperms=1000, seed=as.integer(Sys.time()), calc_seg_baf_option=3) {
+callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.file, outputfile.prefix, output.figures.prefix, output.gw.figures.prefix, chr_names, masking_output_file, max_allowed_state=250, cn_upper_limit=1000, prior_breakpoints_file=NULL, gamma=1, segmentation.gamma=NA, siglevel=0.05, maxdist=0.01, noperms=1000, seed=as.integer(Sys.time()), calc_seg_baf_option=3) {
   
   set.seed(seed)
   # Load rho/psi/goodness of fit
@@ -260,7 +260,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   res = determine_copynumber(BAFvals, LogRvals, rho, psi, gamma, ctrans, ctrans.logR, maxdist, siglevel, noperms, cn_upper_limit)
   subcloneres = res$subcloneres
   #write.table(subcloneres, gsub(".txt", "_1.txt", output.file), quote=F, col.names=T, row.names=F, sep="\t")
-  write.table(subcloneres, paste0(tools::file_path_sans_ext(output.file),"_1.",tools::file_ext(output.file),sep=""), quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(subcloneres, paste0(outputfile.prefix, "subclones_1.txt"), quote=F, col.names=T, row.names=F, sep="\t")
   
   # Scan the segments for cases that should be merged
   res = merge_segments(subcloneres, BAFvals, LogRvals, rho, psi, gamma, calc_seg_baf_option)
@@ -278,13 +278,13 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   #write.table(BAFvals, file=baf.segmented.file, sep="\t", row.names=F, col.names=T, quote=F)
   # Write the masking details to file
   masking_details = data.frame(samplename=sample.name, masked_count=res$masked_count, masked_size=res$masked_size, max_allowed_state=max_allowed_state)
-  write.table(masking_details, file=masking_output_file, quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(masking_details, file=paste0(outputfile.prefix, "segment_masking_details.txt"), quote=F, col.names=T, row.names=F, sep="\t")
   
   # Write the final copy number profile 
   # NAP: generating two output files: first reporting solution A and the second reporting alternative solutions (B to F)
-  write.table(subcloneres[,c(1:3,8:13)], output.file, quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(subcloneres[,c(1:3,8:13)], paste0(outputfile.prefix, "subclones.txt"), quote=F, col.names=T, row.names=F, sep="\t")
   #write.table(subcloneres, gsub(".txt","_extended.txt",output.file), quote=F, col.names=T, row.names=F, sep="\t")
-  write.table(subcloneres, paste0(tools::file_path_sans_ext(output.file),"_extended.",tools::file_ext(output.file),sep=""), quote=F, col.names=T, row.names=F, sep="\t")
+  write.table(subcloneres, paste0(outputfile.prefix,"subclones_extended.txt"), quote=F, col.names=T, row.names=F, sep="\t")
 
   # NAP - November 2023
   # Recalculate PGA.is.clonal to match the final copy number profile in copynumber.txt file (previously subclones.txt file)
@@ -333,7 +333,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
                              siglevel=siglevel,
                              x.min=min(pos)/1000000,
                              x.max=max(pos)/1000000,
-                             title=paste(sample.name,", chromosome ", chr, sep=""),
+                             title=paste0(sample.name, ", ", chr),
                              xlab="Position (Mb)",
                              ylab.logr="LogR",
                              ylab.baf="BAF (phased)")
@@ -360,7 +360,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   # Create user friendly cellularity and ploidy output file
   cellularity_ploidy_output = data.frame(purity = c(rho), ploidy = c(ploidy), psi = c(psit))
   # cellularity_file = gsub("_.+\\.txt$", "_purity_ploidy.txt", output.file) # NAP: updated the name of the output file, consistent with new title (and added flexibility with what output.file is named)
-  cellularity_file = paste0(sample.name,"_purity_ploidy.txt") 
+  cellularity_file = paste0(outputfile.prefix, "purity_ploidy.txt") 
   write.table(cellularity_ploidy_output, cellularity_file, quote=F, sep="\t", row.names=F)
 }
 
@@ -867,6 +867,7 @@ plot.gw.subclonal.cn = function(subclones, BAFvals, rho, ploidy, goodness, outpu
   chr.segs = lapply(1:length(chr.names), function(ch) { which(BAFvals$Chromosome==chr.names[ch]) })
   
   # Plot subclonal copy number as mixtures of two states
+  chr.names.short = gsub("chr", "", chr.names)
   png(filename = paste(output.gw.figures.prefix, "_average.png", sep=""), width = 2000, height = 500, res = 200, type = "cairo")
   create.bb.plot.average(bafsegmented=BAFvals,
                          ploidy=ploidy,
@@ -877,7 +878,7 @@ plot.gw.subclonal.cn = function(subclones, BAFvals, rho, ploidy, goodness, outpu
                          segment_states_min=segment_states_min,
                          segment_states_tot=segment_states_tot,
                          chr.segs=chr.segs,
-                         chr.names=chr.names,
+                         chr.names=chr.names.short,
                          tumourname=tumourname)
   dev.off()
   
@@ -896,7 +897,7 @@ plot.gw.subclonal.cn = function(subclones, BAFvals, rho, ploidy, goodness, outpu
                            is_subclonal_maj=is_subclonal_maj,
                            is_subclonal_min=is_subclonal_min,
                            chr.segs=chr.segs,
-                           chr.names=chr.names,
+                           chr.names=chr.names.short,
                            tumourname=tumourname)
   dev.off()
 }
