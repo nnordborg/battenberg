@@ -146,13 +146,14 @@ getBAFsAndLogRs = function(tumourAlleleCountsFile.prefix, normalAlleleCountsFile
     }
   }
 
+  chr_names_short = gsub("chr","",chr_names)
   ascat.bc = list(Tumor_LogR=as.data.frame(tumor.LogR[,3]), Tumor_BAF=as.data.frame(tumor.BAF[,3]),
                   Germline_LogR=as.data.frame(germline.LogR[,3]), Germline_BAF=as.data.frame(germline.BAF[,3]),
                   Tumor_LogR_segmented=NULL, Tumor_BAF_segmented=NULL, Tumor_counts=NULL, Germline_counts=NULL,
-                  SNPpos=tumor.LogR[,1:2], chrs=chr_names, samples=c(samplename), chrom=split_genome(tumor.LogR[,1:2]),
+                  SNPpos=tumor.LogR[,1:2], chrs=chr_names_short, samples=c(samplename), chrom=split_genome(tumor.LogR[,1:2]),
                   ch=ch)
 
-  ASCAT::ascat.plotRawData(ascat.bc) #, parentDir=figuresFile.prefix)
+  ASCAT::ascat.plotRawData(ascat.bc, img.dir=figuresFile.prefix) #, parentDir=figuresFile.prefix)
 }
 
 #' Prepare data for impute
