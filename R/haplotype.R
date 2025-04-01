@@ -110,11 +110,12 @@ GetChromosomeBAFs = function(chrom, SNP_file, haplotypeFile, samplename, outfile
 #' @param haplotyped.baf.file File containing the haplotyped SNP info.
 #' @param imageFileName Filename as which the png will be saved.
 #' @param samplename Name of the sample to be used in image title.
+#' @param imageTitle Optional, if not specified a title is created from the sample name and chromosome
 #' @param chrom The chromosome that is plotted.
 #' @param chr_names A list of allowed chromosome names.
 #' @author dw9
 #' @export
-plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names) {
+plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, chrom, chr_names, imageTitle=NA) {
   chr_name = chrom
   mut_data = read.table(haplotyped.baf.file,sep="\t",header=T)
   
@@ -125,14 +126,15 @@ plot.haplotype.data = function(haplotyped.baf.file, imageFileName, samplename, c
     x_min = 1
     x_max = 2
   }
-
+  if (is.na(imageTitle)) imageTitle=paste(samplename,", chromosome",mut_data[1,1], sep=" ")
+  
   png(filename = imageFileName, width = 10000, height = 2500, res = 500, type = "cairo")
   create.haplotype.plot(chrom.position=mut_data$Position, 
                         points.blue=mut_data[,3], 
                         points.red=1-mut_data[,3], 
                         x.min=x_min, 
                         x.max=x_max, 
-                        title=paste(samplename,", chromosome",mut_data[1,1], sep=" "), 
+                        title=imageTitle, 
                         xlab="pos", 
                         ylab="BAF")
   dev.off()
