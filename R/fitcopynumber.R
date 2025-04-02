@@ -946,18 +946,20 @@ collapse_bafsegmented_to_segments = function(bafsegmented) {
 #' @param allelecounts_file Optional file with raw allele counts (Default: NULL)
 #' @author sd11
 #' @export
-make_posthoc_plots = function(samplename, logr_file, bafsegmented_file, logrsegmented_file, allelecounts_file=NULL) {
+make_posthoc_plots = function(samplename, logr_file, bafsegmented_file, logrsegmented_file, allelecounts_file=NULL, output.prefix=NA) {
   # Make some post-hoc plots
+  if (is.na(output.prefix)) output.prefix=paste0(samplename, "_")
+  
   logr = Battenberg::read_table_generic(logr_file)
   bafsegmented = as.data.frame(Battenberg::read_table_generic(bafsegmented_file))
   logrsegmented = as.data.frame(Battenberg::read_table_generic(logrsegmented_file, header=F))
   colnames(logrsegmented) = c("Chromosome", "Position", "logRseg")
-  outputfile = paste0(samplename, "_alleleratio.png")
+  outputfile = paste0(output.prefix, "alleleratio.png")
   allele_ratio_plot(samplename=samplename, logr=logr, bafsegmented=bafsegmented, logrsegmented=logrsegmented, outputfile=outputfile, max.plot.cn=8)
   
   if (!is.null(allelecounts_file)) {
     allelecounts = as.data.frame(Battenberg::read_table_generic(allelecounts_file))
-    outputfile = paste0(samplename, "_coverage.png")
+    outputfile = paste0(output.prefix, "coverage.png")
     coverage_plot(samplename, allelecounts, outputfile)
   }
 }
