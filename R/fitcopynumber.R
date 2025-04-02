@@ -69,13 +69,14 @@ fit.copy.number = function(samplename, outputfile.prefix, inputfile.baf.segmente
   logR.data = list()
   segmented.logR.data = list()
   matched.segmented.BAF.data = list()
-  gsubchr = function(chr) gsub("chr","",as.character(chr))
+  #gsubchr = function(chr) gsub("chr","",as.character(chr))
   
-  chr.names = gsubchr(unique(segmented.BAF.data[,1]))
+  #chr.names = gsubchr(unique(segmented.BAF.data[,1]))
+  chr.names = unique(segmented.BAF.data[,1])
   
-  segmented.BAF.data$Chromosome = gsubchr(segmented.BAF.data$Chromosome)
-  raw.BAF.data$Chromosome = gsubchr(raw.BAF.data$Chromosome)
-  raw.logR.data$Chromosome =gsubchr(raw.logR.data$Chromosome)
+  #segmented.BAF.data$Chromosome = gsubchr(segmented.BAF.data$Chromosome)
+  #raw.BAF.data$Chromosome = gsubchr(raw.BAF.data$Chromosome)
+  #raw.logR.data$Chromosome =gsubchr(raw.logR.data$Chromosome)
   
   baf_segmented_split = split(segmented.BAF.data, f=segmented.BAF.data$Chromosome)
   baf_split = split(raw.BAF.data, f=raw.BAF.data$Chromosome)
