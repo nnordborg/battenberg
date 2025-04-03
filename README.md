@@ -1,6 +1,17 @@
-# Battenberg
+# Battenberg (SCAN-B fork)
 
 This repository contains code for the whole genome sequencing subclonal copy number caller Battenberg, as described in [Nik-Zainal, Van Loo, Wedge, et al. (2012), Cell](https://www.ncbi.nlm.nih.gov/pubmed/22608083).
+
+### Changes in the SCANB-fork:
+- Changed a lot of places to use filename prefixes instead of the sample name when creating output files.
+- Removed 'chr' from some plots where there was not enough space to have the full chromosome names.
+
+To install the SCAN-B fork of Battenberg, run the following from the command line:
+
+```
+R -q -e 'devtools::install_github("nnordborg/battenberg@scanb")'
+```
+
 
 ## Installation instructions
 

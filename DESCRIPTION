@@ -2,8 +2,8 @@ Package: Battenberg
 Maintainer: Stefan Dentro <sd11@sanger.ac.uk>
 License: GPL-3
 Type: Package
-Title: Battenberg subclonal copy number caller
-Version: 2.9.9.9000
+Title: Battenberg subclonal copy number caller (SCAN-B fork)
+Version: 2.9.9.9000-1
 Authors@R: c(person("David", "Wedge", role=c("aut"), email="dw9@sanger.ac.uk"),
     person("Peter", "Van Loo", role=c("aut")),
     person("Naser", "Ansari-Pour", role=c("aut"), email="naser.ansari-pour@imm.ox.ac.uk"),
@@ -14,7 +14,8 @@ Authors@R: c(person("David", "Wedge", role=c("aut"), email="dw9@sanger.ac.uk"),
     person("Gro", "Nielsen", role="ctb"),
     person("Jiqiu","Cheng", role="ctb"),
     person("Mohammed Faizal","Eeman Mootor", role="ctb"),
-    person("Julio Cesar","Cortes Rios", role="ctb"))
+    person("Julio Cesar","Cortes Rios", role="ctb").
+    person("Nicklas","Nordborg", role="ctb", comment="SCAN-B fork", email="nicklas.nordborg@med.lu.se"))
 Description: Estimate subclonal copy number from whole genome sequencing or SNP6 data.
 Depends: 
   R (>= 4.3.1),
@@ -41,7 +42,7 @@ Remotes:
   VanLoo-lab/ascat/ASCAT
 VignetteBuilder: 
   knitr
-URL: https://github.com/Wedge-Oxford/battenberg
+URL: https://github.com/nnordborg/battenberg
 LazyLoad: yes
 Suggests:
     testthat
