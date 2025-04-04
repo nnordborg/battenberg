@@ -166,20 +166,21 @@ fit.copy.number = function(samplename, outputfile.prefix, inputfile.baf.segmente
   }
 print(paste0("Ces: "," 0 ", ascat_optimum_pair))
   
-  distance.outfile=paste(outputfile.prefix,"second_distance.png",sep="",collapse="") # kjd 20-2-2014
-  copynumberprofile.outfile=paste(outputfile.prefix,"second_copynumberprofile.png",sep="",collapse="") # kjd 20-2-2014
-  nonroundedprofile.outfile=paste(outputfile.prefix,"second_nonroundedprofile.png",sep="",collapse="") # kjd 20-2-2014
-  
-  # All is set up, now run ASCAT to obtain a clonal copynumber profile
-  out = run_clonal_ASCAT( logR, 1-BAF.data[,3], segLogR, segBAF, chr.segs, matched.segmented.BAF.data, ascat_optimum_pair, dist_choice, distance.outfile, copynumberprofile.outfile, nonroundedprofile.outfile, gamma_param=gamma_param, read_depth, uninformative_BAF_threshold, allow100percent=T, reliabilityFile=NA,  psi_min_initial=min.ploidy, psi_max_initial=max.ploidy, rho_min_initial=min.rho, rho_max_initial=max.rho, chr.names=chr.names) # kjd 21-2-2014
-  
-  ascat_optimum_pair_fraction_of_genome = out$output_optimum_pair_without_ref
-  ascat_optimum_pair_ref_seg = out$output_optimum_pair
-  is.ref.better = out$is.ref.better
-  
-  # Save rho, psi and ploidy for future reference
-  rho_psi_output = data.frame(rho = c(ascat_optimum_pair$rho,ascat_optimum_pair_fraction_of_genome$rho,ascat_optimum_pair_ref_seg$rho),psi = c(ascat_optimum_pair$psi,ascat_optimum_pair_fraction_of_genome$psi,ascat_optimum_pair_ref_seg$psi), ploidy = c(ascat_optimum_pair$ploidy,ascat_optimum_pair_fraction_of_genome$ploidy,ascat_optimum_pair_ref_seg$ploidy), distance = c(NA,out$distance_without_ref,out$distance), is.best = c(NA,!is.ref.better,is.ref.better),row.names=c("ASCAT","FRAC_GENOME","REF_SEG"))
-  write.table(rho_psi_output,paste(outputfile.prefix,"rho_and_psi.txt",sep=""),quote=F,sep="\t")
+  if (!is.na(ascat_optimum_pair$psi) && !is.na(ascat_optimum_pair$rho)) {
+    distance.outfile=paste(outputfile.prefix,"second_distance.png",sep="",collapse="") # kjd 20-2-2014
+    copynumberprofile.outfile=paste(outputfile.prefix,"second_copynumberprofile.png",sep="",collapse="") # kjd 20-2-2014
+    nonroundedprofile.outfile=paste(outputfile.prefix,"second_nonroundedprofile.png",sep="",collapse="") # kjd 20-2-2014
+    
+    # All is set up, now run ASCAT to obtain a clonal copynumber profile
+    out = run_clonal_ASCAT( logR, 1-BAF.data[,3], segLogR, segBAF, chr.segs, matched.segmented.BAF.data, ascat_optimum_pair, dist_choice, distance.outfile, copynumberprofile.outfile, nonroundedprofile.outfile, gamma_param=gamma_param, read_depth, uninformative_BAF_threshold, allow100percent=T, reliabilityFile=NA,  psi_min_initial=min.ploidy, psi_max_initial=max.ploidy, rho_min_initial=min.rho, rho_max_initial=max.rho, chr.names=chr.names) # kjd 21-2-2014
+    
+    ascat_optimum_pair_fraction_of_genome = out$output_optimum_pair_without_ref
+    ascat_optimum_pair_ref_seg = out$output_optimum_pair
+    is.ref.better = out$is.ref.better
+    # Save rho, psi and ploidy for future reference
+    rho_psi_output = data.frame(rho = c(ascat_optimum_pair$rho,ascat_optimum_pair_fraction_of_genome$rho,ascat_optimum_pair_ref_seg$rho),psi = c(ascat_optimum_pair$psi,ascat_optimum_pair_fraction_of_genome$psi,ascat_optimum_pair_ref_seg$psi), ploidy = c(ascat_optimum_pair$ploidy,ascat_optimum_pair_fraction_of_genome$ploidy,ascat_optimum_pair_ref_seg$ploidy), distance = c(NA,out$distance_without_ref,out$distance), is.best = c(NA,!is.ref.better,is.ref.better),row.names=c("ASCAT","FRAC_GENOME","REF_SEG"))
+    write.table(rho_psi_output,paste(outputfile.prefix,"rho_and_psi.txt",sep=""),quote=F,sep="\t")
+  }
 }
 
 #' Fit subclonal copy number
