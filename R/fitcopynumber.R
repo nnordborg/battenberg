@@ -360,7 +360,7 @@ callSubclones = function(sample.name, baf.segmented.file, logr.file, rho.psi.fil
   plot.gw.subclonal.cn(subclones=subclones, BAFvals=BAFvals, rho=rho, ploidy=ploidy, goodness=goodness, output.gw.figures.prefix=output.gw.figures.prefix, chr.names=chr_names, tumourname=sample.name)
   
   # Create user friendly cellularity and ploidy output file
-  cellularity_ploidy_output = data.frame(purity = c(rho), ploidy = c(ploidy), psi = c(psit))
+  cellularity_ploidy_output = data.frame(purity = c(rho), ploidy = c(ploidy), psi = c(psit), pga.is.clonal = c(goodness))
   # cellularity_file = gsub("_.+\\.txt$", "_purity_ploidy.txt", output.file) # NAP: updated the name of the output file, consistent with new title (and added flexibility with what output.file is named)
   cellularity_file = paste0(outputfile.prefix, "purity_ploidy.txt") 
   write.table(cellularity_ploidy_output, cellularity_file, quote=F, sep="\t", row.names=F)
