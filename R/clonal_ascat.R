@@ -1284,7 +1284,7 @@ find_centroid_of_global_minima <- function( d, ref_seg_matrix, ref_major, ref_mi
 #' @return A list with fields psi, rho and ploidy
 #' @export
 #the limit on rho is lenient and may lead to spurious solutions
-runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choice, distancepng = NA, copynumberprofilespng = NA, nonroundedprofilepng = NA, cnaStatusFile = "copynumber_solution_status.txt", gamma = 0.55, allow100percent,reliabilityFile=NA,min.ploidy=1.6,max.ploidy=4.8,min.rho=0.1,max.rho=1.0,min.goodness=63, uninformative_BAF_threshold = 0.51, chr.names, analysis="paired") {
+runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choice, distancepng = NA, copynumberprofilespng = NA, nonroundedprofilepng = NA, cnaStatusFile = "copynumber_solution_status.txt", allSolutionsFile = NA, gamma = 0.55, allow100percent,reliabilityFile=NA,min.ploidy=1.6,max.ploidy=4.8,min.rho=0.1,max.rho=1.0,min.goodness=63, uninformative_BAF_threshold = 0.51, chr.names, analysis="paired") {
   ch = chromosomes
   b = bafsegmented
   r = lrrsegmented[names(bafsegmented)]
@@ -1312,6 +1312,8 @@ runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choi
   nropt = 0
   localmin = NULL
   optima = list()
+  all_solutions = data.frame(rho=numeric(), psi=numeric(), ploidy=numeric(), goodnessOfFit=numeric())
+  
   for (i in 4:(dim(d)[1]-3)) {
     for (j in 4:(dim(d)[2]-3)) {
       m = d[i,j]
@@ -1342,8 +1344,9 @@ runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choi
 			goodnessOfFit = -m/TheoretMaxdist * 100 # we have to use minus to reverse d=-d above
 		}
 		
-		print(paste("ploidy=",ploidy,",rho=",rho,",goodness=",goodnessOfFit,",percentzero=",percentzero,", perczerAbb=",perczeroAbb,sep=""))
-		if (ploidy >= min.ploidy & ploidy <= max.ploidy & rho >= min.rho & goodnessOfFit >= min.goodness & (percentzero > 0.01 | perczeroAbb > 0.1)) {	
+		print(paste("ploidy=",ploidy,",psi=",psi,",rho=",rho,",goodness=",goodnessOfFit,",percentzero=",percentzero,", perczerAbb=",perczeroAbb,sep=""))
+		all_solutions = rbind(all_solutions, c(rho, psi, ploidy, goodnessOfFit))
+        if (ploidy >= min.ploidy & ploidy <= max.ploidy & rho >= min.rho & goodnessOfFit >= min.goodness & (percentzero > 0.01 | perczeroAbb > 0.1)) {	
           nropt = nropt + 1
           optima[[nropt]] = c(m,i,j,ploidy,goodnessOfFit)
           localmin[nropt] = m
@@ -1388,7 +1391,9 @@ runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choi
 			goodnessOfFit = -m/TheoretMaxdist * 100 # we have to use minus to reverse d=-d above
 		}
 
-          if (ploidy > min.ploidy & ploidy < max.ploidy & rho >= min.rho & goodnessOfFit >= min.goodness) {
+		print(paste("ploidy=",ploidy,",psi=",psi,",rho=",rho,",goodness=",goodnessOfFit,",percentzero=",percentzero,", perczerAbb=",perczeroAbb,sep=""))
+ 		all_solutions = rbind(all_solutions, c(rho, psi, ploidy, goodnessOfFit))
+        if (ploidy > min.ploidy & ploidy < max.ploidy & rho >= min.rho & goodnessOfFit >= min.goodness) {
             nropt = nropt + 1
             optima[[nropt]] = c(m,i,j,ploidy,goodnessOfFit)
             localmin[nropt] = m
@@ -1401,7 +1406,10 @@ runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choi
   # added for output to plotting
   psi_opt1_plot = vector(mode="numeric")
   rho_opt1_plot = vector(mode="numeric")
-
+  names(all_solutions) = c('Rho', 'Psi', 'Ploidy', 'GoodnessOfFit')
+  if (!is.na(allSolutionsFile)) {
+    write.table(all_solutions, file=allSolutionsFile, col.names=T, row.names=F, quote=F)
+  }
   if (nropt>0) {
     write.table(paste(nropt, " copy number solutions found", sep=""), file=cnaStatusFile, quote=F, col.names=F, row.names=F)
     optlim = sort(localmin)[1]
