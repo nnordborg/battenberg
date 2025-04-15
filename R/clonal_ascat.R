@@ -1435,7 +1435,11 @@ runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choi
   if (!is.na(distancepng)) {
     png(filename = distancepng, width = 1000, height = 1000, res = 1000/7, type = "cairo")
   }
-  ASCAT::ascat.plotSunrise(-d, psi_opt1_plot, rho_opt1_plot,minimise)
+  # Revert earlier negation or the plotSunrise method will not draw the background
+  if (!minimise) {
+    d = -d
+  }
+  ASCAT::ascat.plotSunrise(d, psi_opt1_plot, rho_opt1_plot,minimise)
   if (!is.na(distancepng)) { dev.off() }
 }
 
