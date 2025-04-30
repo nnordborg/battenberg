@@ -1408,7 +1408,7 @@ runASCAT = function(lrr, baf, lrrsegmented, bafsegmented, chromosomes, dist_choi
   rho_opt1_plot = vector(mode="numeric")
   names(all_solutions) = c('Rho', 'Psi', 'Ploidy', 'GoodnessOfFit')
   if (!is.na(allSolutionsFile)) {
-    write.table(all_solutions, file=allSolutionsFile, col.names=T, row.names=F, quote=F)
+    write.table(all_solutions, file=allSolutionsFile, col.names=T, row.names=F, quote=F, sep="\t")
   }
   if (nropt>0) {
     write.table(paste(nropt, " copy number solutions found", sep=""), file=cnaStatusFile, quote=F, col.names=F, row.names=F)
